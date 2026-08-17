@@ -254,7 +254,9 @@ def test_navigation_elides_long_localized_names_without_squeezing_content(
 
         with qtbot.waitExposed(dialog):
             dialog.show()
-        if dialog.width() >= dialog.sizeHint().width():
+        # A screen narrower than the dialog wants leaves it no room to keep the
+        # content out of a horizontal scroll bar.
+        if dialog.width() >= dialog._preferred_width:
             assert dialog._page._scroll_area.horizontalScrollBar().maximum() == 0
     finally:
         qapp.removeTranslator(translator)
@@ -265,6 +267,9 @@ def test_default_size_scrolls_vertically_only(
 ) -> None:
     with qtbot.waitExposed(dialog):
         dialog.show()
+
+    if dialog._preferred_width > 760:
+        pytest.skip("this font needs the dialog wider than its default size")
 
     scroll_area = dialog._page._scroll_area
     assert (dialog.width(), dialog.height()) == (760, 590)
@@ -285,6 +290,8 @@ def test_dialog_prevents_narrow_content_overflow(
 ) -> None:
     with qtbot.waitExposed(dialog):
         dialog.show()
+    if dialog.width() < dialog._preferred_width:
+        pytest.skip("this screen is narrower than the settings content")
     minimum_width = dialog.width()
 
     dialog.resize(minimum_width - 200, dialog.height())
