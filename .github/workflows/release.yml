@@ -15,12 +15,19 @@ jobs:
         with:
           fetch-depth: 0
       - uses: astral-sh/setup-uv@v7
+      - uses: awalsh128/cache-apt-pkgs-action@v1
+        with:
+          packages: libegl1 libxkbcommon0 libxcb-cursor0 libgl1
+          version: 1.0
       - run: make check_translate
       - name: Extract release notes from CHANGELOG.md
         id: release_notes
         run: uv run tools/release_notes.py "$GITHUB_REF_NAME" CHANGELOG.md release-notes.md
           >> "$GITHUB_OUTPUT"
-      - run: uv build
+      - name: Build wheel and source distribution
+        run: uv build
+      - name: Validate release artifacts
+        uses: ./.github/actions/artifact-install-smoke
       - uses: pypa/gh-action-pypi-publish@release/v1
         with:
           skip-existing: true
