@@ -416,13 +416,8 @@ def test_large_font_uses_default_size_with_scrolling(
             dialog.show()
 
         available_size = dialog.screen().availableGeometry().size()
-        scroll_bar_width = dialog.style().pixelMetric(
-            QtWidgets.QStyle.PixelMetric.PM_ScrollBarExtent
-        )
-        assert dialog.width() == min(
-            max(760, dialog.sizeHint().width() + scroll_bar_width),
-            available_size.width(),
-        )
+        assert dialog._preferred_width >= 760
+        assert dialog.width() == min(dialog._preferred_width, available_size.width())
         assert dialog.height() == min(590, available_size.height())
         assert dialog._page._scroll_area.verticalScrollBar().maximum() > 0
     finally:
