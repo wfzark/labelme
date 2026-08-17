@@ -291,6 +291,8 @@ def test_setting_controls_revert_when_write_fails(
     pause: bool,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
+    if os.name == "nt":
+        pytest.skip("a read-only directory does not reject writes on Windows")
     if hasattr(os, "geteuid") and os.geteuid() == 0:
         pytest.skip("a read-only directory is not enforced for root")
 
