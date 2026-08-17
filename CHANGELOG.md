@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Fixed dropped image files entering the File List with forward slashes on Windows; `QUrl` reports a dropped path with forward slashes while every other path in the File List carries the separator of the platform, so the same image could be listed twice once its directory was also opened ([#2467](https://github.com/wkentaro/labelme/pull/2467))
 - Fixed failed auto-saves leaving an edited Annotation marked clean. The dirty title, Save action, and unsaved-changes prompt now remain active, while repeated failures for the same target show only one error until a save succeeds or the target changes ([#2472](https://github.com/wkentaro/labelme/pull/2472))
 - Fixed a cancelled close still overwriting the Window State (window size, position, and dock layout); `closeEvent` ignored the close event but kept going, so cancelling the unsaved-changes prompt saved the current geometry anyway and the next session started from a layout the user never closed on. The Window State is now written only when the close goes through ([#2478](https://github.com/wkentaro/labelme/pull/2478))
 - Fixed Mask Shape construction for Model Session detections with fractional bounding boxes by using the same rounding for Shape points and Mask extents, preventing placement drift and Existing Shape Suppression errors ([#2464](https://github.com/wkentaro/labelme/pull/2464))
